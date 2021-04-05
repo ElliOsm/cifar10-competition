@@ -5,9 +5,13 @@ from tensorflow.keras.losses import CategoricalCrossentropy
 import tensorflow as tf
 
 
+import yaml
+
+with open('./config.yaml', 'r') as f:
+    doc = yaml.safe_load(f)
+
 
 def inceptionV3_compile():
-
 
     pretrained_model = InceptionV3(include_top=False,
                                    weights='imagenet',
@@ -21,13 +25,12 @@ def inceptionV3_compile():
     model.add(Input(shape=(32, 32, 3)))
     model.add(resize_layer)
     model.add(pretrained_model)
-
-    model.add(Dropout(0.5))
     model.add(Flatten())
+    model.add(Dropout(0.5))
     model.add(Dense(32, activation='relu'))
     model.add(Dense(10, activation='softmax'))
 
-    opt = tf.keras.optimizers.Adam(learning_rate=0.0001)
+    opt = tf.keras.optimizers.Adam(learning_rate=doc['learning_rate'])
 
     model.compile(optimizer=opt,
                   loss=CategoricalCrossentropy(),

@@ -3,6 +3,7 @@ from tensorflow.keras import Sequential, Input
 from tensorflow.keras.layers import Dense, Lambda, Flatten, Dropout
 from tensorflow.keras.losses import CategoricalCrossentropy
 import tensorflow as tf
+from tensorflow.keras.metrics import CategoricalAccuracy
 
 import yaml
 
@@ -25,15 +26,15 @@ def denseNet201_compile():
     model.add(pretrained_model)
 
     model.add(Flatten())
-    model.add(Dense(32, activation='relu'))
     model.add(Dropout(0.5))
+    model.add(Dense(32, activation='relu'))
     model.add(Dense(10, activation='softmax'))
 
     opt = tf.keras.optimizers.Adam(learning_rate=doc['learning_rate'])
 
     model.compile(optimizer=opt,
                   loss=CategoricalCrossentropy(),
-                  metrics=['accuracy'])
+                  metrics=CategoricalAccuracy())
 
     model.summary()
 
